@@ -47,13 +47,13 @@
                                             <div class="col-xl-12">
                                                 <div class="row">
                                                     <div class="col-xl-8 col-md-10 m-auto">
-                                                        <h2>Relação de Cursos</h2>
+                                                        <h2>Relação de alunos</h2>
                                                         <table class="table">
                                                             <thead>
                                                                 <tr>
                                                                 <th scope="col">ID</th>
                                                                 <th scope="col">NOME DO ALUNO</th>
-                                                                <th scope="col">ID DO CURSO</th>
+                                                                <th scope="col">Nome DO CURSO</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -62,18 +62,27 @@
                                                                 $response = file_get_contents($url);
                                                                 $data = json_decode($response, true);
 
-                                                                if (isset($data['dados'])) {                                                                    
+                                                                function lista_um_curso($id_curso) {
+                                                                    $url = 'http://localhost/exercicio/api.php/cursos/' . $id_curso; 
+                                                                    $response = file_get_contents($url);
+                                                                    return json_decode($response, true); 
+                                                                }
+
+                                                                if (isset($data['dados'])) {
                                                                     foreach ($data['dados'] as $curso) {
+                                                                        $cursoDetalhes = lista_um_curso($curso['fk_cursos_id_curso']); 
+
                                                                         echo "<tr>";
-                                                                        echo '<td>' . $curso['id'] . '</td>';
-                                                                        echo '<td>' . $curso['nome'] . '</td>';
-                                                                        echo '<td>' . $curso['fk_cursos_id_curso'] . '</td>';
-                                                                        echo "</tr>";            
+                                                                        echo '<td>' . htmlspecialchars($curso['id']) . '</td>';
+                                                                        echo '<td>' . htmlspecialchars($curso['nome']) . '</td>';
+                                                                        echo '<td>' . htmlspecialchars($cursoDetalhes['dados']['nome_curso'] ?? 'N/A') . '</td>'; 
+                                                                        echo "</tr>";
                                                                     }
                                                                 } else {
                                                                     echo '<p>Nenhum curso encontrado.</p>';
                                                                 }
-                                                            ?>                                                                    
+                                                                ?>
+                                                                 
                                                             </tbody>
                                                         </table>
                                                     </div>
